@@ -11,6 +11,6 @@ def test_post():
         if test_bool:
             response = Response(json.dumps({"content": "omg hi", "number": 17}), status=200)
         else:
-            response = Response(json.dumps({"content": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "number": 1}), status=200)
+            response = Response(json.dumps({"content": "BBBBBBBBBBBBBBBBBBBBBBBBBBB", "number": 1}), status=200)
         response.headers.set('Content-Type', 'application/json')
         return response

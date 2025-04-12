@@ -1,0 +1,3 @@
+./.gitignore
+server/google-key.json
+server/audio_files

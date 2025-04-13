@@ -1,5 +1,3 @@
-*/__pycache__
-./.gitignore
+**/__pycache__/
 server/google-key.json
 server/audio_files
-server/v2-test.py

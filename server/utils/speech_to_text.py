@@ -1,9 +1,11 @@
+import json 
+
 from google.cloud import speech
 
-async def speech_to_text(audio_file):
+import utils.language_codes as lang
+
+def speech_to_text(audio_content, language):
     client = speech.SpeechClient()
-    with open(audio_file, "rb") as f:
-        audio_content = f.read()
     
     audio = speech.RecognitionAudio(content=audio_content)
     config = speech.RecognitionConfig(
@@ -14,4 +16,7 @@ async def speech_to_text(audio_file):
     )
 
     response = client.recognize(config=config, audio=audio)
-    return await(response).results[0]
+    for result in response.results:
+        print(f"Transcript: {result.alternatives[0].transcript}")
+
+    print(response)

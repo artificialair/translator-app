@@ -2,9 +2,7 @@ from flask import request, Response
 from . import routes
 import json
 
-import time
-
-from googletrans import Translator
+import utils.translate as translator
 
 @routes.route('/translate', methods=['GET'])
 async def translate():
@@ -19,9 +17,8 @@ async def translate():
         elif not dest:
             response = Response(json.dumps({"success": False, "reason": "Missing one or more args: dest"}), status=403)
         else:
-            translator = Translator()
-            translation = translator.translate(phrase, src=src, dest=dest)
-            response = Response(json.dumps({"success": True, "content": (await translation).text}), status=200)
+            translation = translator.translate(phrase=phrase, src=src, dest=dest)
+            response = Response(json.dumps({"success": True, "content": await translation}), status=200)
         
         response.headers.set('Content-Type', 'application/json')
         return response

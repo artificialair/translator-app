@@ -9,18 +9,6 @@ import 'httphandling.dart';
 
 // --------------------------------------------------------------------------------
 
-Map<String, String> languageCodes = {
-    'English': 'en',
-    'Spanish': 'es',
-    'Japanese': 'jp',
-    'Latin': 'la',
-    'French': 'fr',
-    'German': 'de',
-    'Korean': 'ko',
-    'Swedish': 'sv',
-    'Russian': 'ru',
-    'Norwegian': 'no',
-};
 
 void main() {
     runApp(MaterialApp(home: TranslatorAppImplementation()));
@@ -34,16 +22,38 @@ class TranslatorApp extends StatelessWidget {
     return const MaterialApp(home: TranslatorAppImplementation());
   }
 }
+class tLCD {
+  static Map<String, String> languageCodes = {
+  'English': 'en',
+  'Spanish': 'es',
+  'Japanese': 'ja',
+  'Latin': 'la',
+  'French': 'fr',
+  'German': 'de',
+  'Korean': 'ko',
+  'Swedish': 'sv',
+  'Russian': 'ru',
+  'Norwegian': 'no',
+  'Arabic': "ar",
+};
+  static final List<MenuEntry> menuEntries = UnmodifiableListView<MenuEntry>(
+  languageCodes.keys.map<MenuEntry>((String name) => MenuEntry(value: name, label: name)),
+);
+
+  static String dropdownValuesrc = languageCodes.keys.first;
+  static String dropdownValuedest = languageCodes.keys.first;
+}
+
 
 class HTTPNotifier extends ChangeNotifier {
-  String src_code = "";
-  String dest_code = "";
+  String src_code = "en";
+  String dest_code = "en";
   String substr = "";
   late var http_endpoint;
   final http_url = "https://translator-backend-kbqg.onrender.com";
   
   void updateURL(String str, String src, String dest) {
-    http_endpoint = "${http_url}/translate?string=${str}&src=${src}&dst=${dest}";
+    http_endpoint = "${http_url}/translate?string=${str}&src=${src}&dest=${dest}";
     if (src != src_code) {
       src_code = src;
     }
@@ -84,12 +94,6 @@ class _TranslatorAppState extends State<TranslatorAppImplementation> {
   TextNotifier _textNotifier = new TextNotifier();
   HTTPNotifier _httpNotifier = new HTTPNotifier();
 
-  static final List<MenuEntry> menuEntries = UnmodifiableListView<MenuEntry>(
-    languageCodes.keys.map<MenuEntry>((String name) => MenuEntry(value: name, label: name)),
-  );
-
-  String dropdownValuesrc = languageCodes.keys.first;
-  String dropdownValuedest = languageCodes.keys.first;
     
   @override
   Widget build(BuildContext context) {
@@ -103,7 +107,7 @@ class _TranslatorAppState extends State<TranslatorAppImplementation> {
               Column(
                 children: <Widget> [
                   SizedBox(
-                    width: 250,
+                    width: 500,
                     child: TextField(
                       controller: _controller,
                       decoration: InputDecoration(
@@ -128,19 +132,7 @@ class _TranslatorAppState extends State<TranslatorAppImplementation> {
                     child: ListenableBuilder(
                       listenable: _httpNotifier,
                       builder: (context, child) {
-                        return DropdownMenu<String>(
-                        initialSelection: languageCodes.keys.first,
-                        onSelected: (String? value) {
-                          setState(() {
-                            dropdownValuesrc = value!;
-                            });
-  //void updateURL(String str, String src, String src) {
-                            String localLanguageCode = languageCodes[dropdownValuesrc]!;
-                            _httpNotifier.updateURL(_httpNotifier.substr, localLanguageCode, _httpNotifier.dest_code);
-                            print(_httpNotifier.http_endpoint);
-                          },
-                        dropdownMenuEntries: menuEntries,
-                        );
+                        return LanguageDropdown(notifier: _httpNotifier);
                       }
                     ),
                   ),
@@ -149,7 +141,7 @@ class _TranslatorAppState extends State<TranslatorAppImplementation> {
               Column (
                 children: <Widget> [
                   SizedBox(
-                    width: 250,
+                    width: 500,
                     child: Container(
                       decoration: BoxDecoration(border: Border.all()),
                       child: ListenableBuilder(
@@ -164,26 +156,48 @@ class _TranslatorAppState extends State<TranslatorAppImplementation> {
                     child: ListenableBuilder(
                       listenable: _httpNotifier,
                       builder: (context, child) {
-                        return DropdownMenu<String>(
-                        initialSelection: languageCodes.keys.first,
-                        onSelected: (String? value) {
-                          setState(() {
-                            dropdownValuedest = value!;
-                            });
-  //void updateURL(String str, String src, String dest) {
-                            String localLanguageCode = languageCodes[dropdownValuedest]!;
-                            _httpNotifier.updateURL(_httpNotifier.substr, _httpNotifier.src_code, localLanguageCode);
-                            print(_httpNotifier.http_endpoint);
-                          },
-                        dropdownMenuEntries: menuEntries,
-                        );
-                      }
+                        return LanguageDropdown(notifier: _httpNotifier);
+                      },
                     ),
                   ),
                 ],
               ),
             ],
         ),
+      ),
+    );
+  }
+}
+
+class LanguageDropdown extends StatefulWidget {
+  HTTPNotifier notifier;
+
+  LanguageDropdown({Key? key, required this.notifier}) : super(key: key);
+
+  State<LanguageDropdown> createState() => _LanguageDropdownState();
+}
+
+class _LanguageDropdownState extends State<LanguageDropdown> {
+  
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: ListenableBuilder(
+        listenable: widget.notifier,
+        builder: (context, child) {
+          return DropdownMenu<String>(
+          initialSelection: tLCD.languageCodes.keys.first,
+          onSelected: (String? value) {
+            setState(() {
+              tLCD.dropdownValuedest = value!;
+              });
+              String localLanguageCode = tLCD.languageCodes[tLCD.dropdownValuedest]!;
+              widget.notifier.updateURL(widget.notifier.substr, widget.notifier.src_code, localLanguageCode);
+              print(widget.notifier.http_endpoint);
+            },
+          dropdownMenuEntries: tLCD.menuEntries,
+          );
+        }
       ),
     );
   }

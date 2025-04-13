@@ -1,3 +1,4 @@
 Flask[async]==2.2.5
-gunicorn==23.0.0
+google-cloud-speech==2.31.1
 googletrans==4.0.2
+gunicorn==23.0.0

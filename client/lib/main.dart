@@ -5,7 +5,9 @@ import "package:http/http.dart" as http;
 import "package:record/record.dart";
 import "package:provider/provider.dart";
 import "package:collection/collection.dart";
+
 import 'httphandling.dart';
+import 'recordFramework.dart';
 
 // --------------------------------------------------------------------------------
 
@@ -92,6 +94,7 @@ class _TranslatorAppState extends State<TranslatorAppImplementation> {
   TextEditingController _controller = TextEditingController();
 
   late var _http_endpoint;
+  var recorder = recordFramework();
 
   TextNotifier _textNotifier = new TextNotifier();
   HTTPNotifier _httpNotifier = new HTTPNotifier();
@@ -203,6 +206,7 @@ class _TranslatorAppState extends State<TranslatorAppImplementation> {
                     setState(() {
                       // Toggle light when tapped.
                       _recording = !_recording;
+                      recorder.toggleRecording();
                     });
                   },
                   child: Container(

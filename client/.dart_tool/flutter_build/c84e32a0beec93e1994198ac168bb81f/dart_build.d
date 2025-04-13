@@ -1,0 +1,1 @@
+ /home/kat/dev-env/Mobile/translator_app/client/.dart_tool/flutter_build/c84e32a0beec93e1994198ac168bb81f/dart_build_result.json: 

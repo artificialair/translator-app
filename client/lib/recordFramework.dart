@@ -34,7 +34,7 @@ class recordFramework {
   Future<void> startRecording() async {
     try {
       print("BYEEEEEEEEEEEEEE");
-      String filePath = "../audiofiles/temp_audio.wav";
+      String filePath =  "temp_audio.wav";
 
       await audioRecorder.start(const RecordConfig(encoder: AudioEncoder.wav), path:filePath);
     }

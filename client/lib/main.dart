@@ -104,6 +104,15 @@ class _TranslatorAppState extends State<TranslatorAppImplementation> {
     final Size size = MediaQuery.sizeOf(context);
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          style: TextStyle(
+            color: Colors.white,
+          ),
+          "Translator App! :)"
+        ),
+        backgroundColor: Colors.blue.shade300,
+      ),
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 25),
         alignment: FractionalOffset.center,
@@ -156,7 +165,6 @@ class _TranslatorAppState extends State<TranslatorAppImplementation> {
                       ),
                     ),
                   ),
-
                   ListenableBuilder(
                     listenable: _httpNotifier,
                     builder: (context, child) {
@@ -171,33 +179,40 @@ class _TranslatorAppState extends State<TranslatorAppImplementation> {
             ),
             Column(
               children: [
-                ElevatedButton(
-                  onPressed: () async {
-                    String text = _controller.text;
-                    _httpNotifier.updateURL(
-                      text,
-                      _httpNotifier.src_code,
-                      _httpNotifier.dest_code,
-                    );
-                    var response = await http.get(
-                      Uri.parse(_httpNotifier.http_endpoint),
-                    );
-                    if (response.statusCode == 200) {
-                      var translatedText = jsonDecode(response.body)["content"];
-                      _textNotifier.updateText(translatedText);
-                    } else {
-                      _textNotifier.updateText(
-                        "HTTP Error, please try again later.",
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 380),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      String text = _controller.text;
+                      _httpNotifier.updateURL(
+                        text,
+                        _httpNotifier.src_code,
+                        _httpNotifier.dest_code,
                       );
-                    }
-                  },
-                  child: Text('Translate!'),
+                      var response = await http.get(
+                        Uri.parse(_httpNotifier.http_endpoint),
+                      );
+                      if (response.statusCode == 200) {
+                        var translatedText = jsonDecode(response.body)["content"];
+                        _textNotifier.updateText(translatedText);
+                      } else {
+                        _textNotifier.updateText(
+                          "HTTP Error, please try again later.",
+                        );
+                      }
+                    },
+                    child: Text('Translate! → '),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue.shade300,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Icon(
                     Icons.mic_rounded,
-                    color: _recording ? Colors.black : Colors.red,
+                    color: _recording ? Colors.red : Colors.black,
                     size: 60,
                   ),
                 ),
@@ -210,11 +225,14 @@ class _TranslatorAppState extends State<TranslatorAppImplementation> {
                     });
                   },
                   child: Container(
-                    color: Colors.yellow.shade600,
+                    color: Colors.blue.shade300,
                     padding: const EdgeInsets.all(8),
                     // Change button text when light changes state.
                     child: Text(
-                      _recording ? 'Begin Recording' : 'End Recording',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ), 
+                      _recording ? 'End Recording' : 'Begin Recording',
                     ),
                   ),
                 ),

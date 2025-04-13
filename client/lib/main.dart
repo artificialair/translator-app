@@ -2,106 +2,224 @@ import 'package:flutter/material.dart';
 import "dart:async";
 import "dart:convert";
 import "package:http/http.dart" as http;
+import "package:record/record.dart";
+import "package:provider/provider.dart";
+import "package:collection/collection.dart";
 import 'httphandling.dart';
 
 // --------------------------------------------------------------------------------
-void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+
+void main() {
+    runApp(MaterialApp(home: TranslatorAppImplementation()));
+}
+
+class TranslatorApp extends StatelessWidget {
+  const TranslatorApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: UserList(),
-    );
+    return const MaterialApp(home: TranslatorAppImplementation());
+  }
+}
+class tLCD {
+  static Map<String, String> languageCodes = {
+  'English': 'en',
+  'Spanish': 'es',
+  'Japanese': 'ja',
+  'Latin': 'la',
+  'French': 'fr',
+  'German': 'de',
+  'Korean': 'ko',
+  'Swedish': 'sv',
+  'Russian': 'ru',
+  'Norwegian': 'no',
+  'Arabic': "ar",
+};
+  static final List<MenuEntry> menuEntries = UnmodifiableListView<MenuEntry>(
+  languageCodes.keys.map<MenuEntry>((String name) => MenuEntry(value: name, label: name)),
+);
+
+  static String dropdownValuesrc = languageCodes.keys.first;
+  static String dropdownValuedest = languageCodes.keys.first;
+}
+
+
+class HTTPNotifier extends ChangeNotifier {
+  String src_code = "en";
+  String dest_code = "en";
+  String substr = "";
+  late var http_endpoint;
+  final http_url = "https://translator-backend-kbqg.onrender.com";
+  
+  void updateURL(String str, String src, String dest) {
+    http_endpoint = "${http_url}/translate?string=${str}&src=${src}&dest=${dest}";
+    if (src != src_code) {
+      src_code = src;
+    }
+    if (dest != dest_code) {
+      dest_code = dest;
+    }
+    if (substr != str) {
+      substr = str;
+    }
+    notifyListeners();
   }
 }
 
-class UserList extends StatefulWidget {
-  @override
-  _UserListState createState() => _UserListState();
+class TextNotifier extends ChangeNotifier {
+  String translated_text = "";
+  
+  void updateText(String text) {
+    translated_text = text;
+    notifyListeners();
+  }
 }
 
-class _UserListState extends State<UserList> {
-  /*http.Response http_response = ;
+class TranslatorAppImplementation extends StatefulWidget {
+  const TranslatorAppImplementation({super.key});
 
-  Future<void> fetchUsers() async {
-    final url = 'https://translator-backend-kbqg.onrender.com/test_post';
-    await httphandling.FetchJSON(url);
-    if (response.statusCode == 201) {
-    setState(() {
-        final response = jsonDecode(response_data.body) as map<String, dynamic>
-      }); 
-    } else {
-      throw Exception('response failed');
-    }
-  }  */
   @override
-  void initState() {
-    super.initState();
-    //fetchUsers();
-  }  
+  State<TranslatorAppImplementation> createState() => _TranslatorAppState();
+}
+
+typedef MenuEntry = DropdownMenuEntry<String>;
+
+class _TranslatorAppState extends State<TranslatorAppImplementation> {
+  bool _recording = false;
+  TextEditingController _controller = TextEditingController();
+
+  late var _http_endpoint;
+
+  TextNotifier _textNotifier = new TextNotifier();
+  HTTPNotifier _httpNotifier = new HTTPNotifier();
+
+    
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('User List')),
-      body: ListView.builder(
-        itemCount: users.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            
-          );
-        },
-      ),
-    );
-  }
-}
-
-
-/*
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-  
-class _MyHomePageState extends State<MyHomePage> {
-    List data = [];
-    String api_endpoint = "https://translator-backend-kbqg.onrender.com/test";
-    Future<void> getResponse() async {
-      var response = await fetchJSON(http_endpoint);
-    }
-}
-
-
-class MyHomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    var appState = context.watch<_MyHomePageState>();
-    String http_endpoint = "https://translator-backend-kbqg.onrender.com/test";
-
-   return Scaffold(
-      body: Column(
-        Text("Send an HTTP Request"),
-        ElevatedButton(
-          onPressed: () {
-            var response = await appState.getResponse(http_endpoint);
-            print(response.body);
-          }
+      body: Container(
+        padding: EdgeInsets.all(150),
+        alignment: FractionalOffset.center,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Column(
+                children: <Widget> [
+                  SizedBox(
+                    width: 500,
+                    child: TextField(
+                      controller: _controller,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(), 
+                        labelText: 'Input text to be translated',), 
+                      onSubmitted: (String value) async {
+                        _httpNotifier.updateURL(value, _httpNotifier.src_code, _httpNotifier.dest_code);
+                        print(_httpNotifier.http_endpoint);
+                        var response = await http.get(Uri.parse(_httpNotifier.http_endpoint));
+                        if (response.statusCode == 200) {
+                          var translated_text = jsonDecode(response.body)["content"];
+                          print(translated_text);
+                          _textNotifier.updateText(translated_text);
+                        }
+                        else {
+                          print("error with the http stuff, status code: ${response.statusCode}, data: ${response.body}");
+                        }
+                      },
+                    ),
+                  ),
+                  Container(
+                    child: ListenableBuilder(
+                      listenable: _httpNotifier,
+                      builder: (context, child) {
+                        return LanguageDropdown(notifier: _httpNotifier);
+                      }
+                    ),
+                  ),
+                  ],
+                ),
+              Column (
+                children: <Widget> [
+                  SizedBox(
+                    width: 500,
+                    child: Container(
+                      decoration: BoxDecoration(border: Border.all()),
+                      child: ListenableBuilder(
+                        listenable: _textNotifier,
+                        builder: (context, child) {
+                          return Text("Translation: ${_textNotifier.translated_text}");
+                        }
+                      ),
+                    )
+                  ),
+                  Container(
+                    child: ListenableBuilder(
+                      listenable: _httpNotifier,
+                      builder: (context, child) {
+                        return LanguageDropdown(notifier: _httpNotifier);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
         ),
       ),
     );
   }
 }
 
-*/
+class LanguageDropdown extends StatefulWidget {
+  HTTPNotifier notifier;
+
+  LanguageDropdown({Key? key, required this.notifier}) : super(key: key);
+
+  State<LanguageDropdown> createState() => _LanguageDropdownState();
+}
+
+class _LanguageDropdownState extends State<LanguageDropdown> {
+  
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: ListenableBuilder(
+        listenable: widget.notifier,
+        builder: (context, child) {
+          return DropdownMenu<String>(
+          initialSelection: tLCD.languageCodes.keys.first,
+          onSelected: (String? value) {
+            setState(() {
+              tLCD.dropdownValuedest = value!;
+              });
+              String localLanguageCode = tLCD.languageCodes[tLCD.dropdownValuedest]!;
+              widget.notifier.updateURL(widget.notifier.substr, widget.notifier.src_code, localLanguageCode);
+              print(widget.notifier.http_endpoint);
+            },
+          dropdownMenuEntries: tLCD.menuEntries,
+          );
+        }
+      ),
+    );
+  }
+}
+/*Padding( padding: const EdgeInsets.all(8.0),
+child: Icon(
+Icons.mic_rounded,
+color: _recording ? Colors.black: Colors.red,
+size: 60,
+),
+),
+GestureDetector(
+onTap: () {
+setState(() {
+// Toggle light when tapped.
+_recording = !_recording;
+});
+},
+child: Container(
+color: Colors.yellow.shade600,
+padding: const EdgeInsets.all(8),
+// Change button text when light changes state.
+child: Text(_recording ? 'Begin Recording' : 'End Recording'),
+),
+),*/

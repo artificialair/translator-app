@@ -1,0 +1,16 @@
+/home/kat/dev-env/Mobile/translator_app/client/build/linux/x64/debug/bundle/translator_app
+/home/kat/dev-env/Mobile/translator_app/client/build/linux/x64/debug/bundle/data/icudtl.dat
+/home/kat/dev-env/Mobile/translator_app/client/build/linux/x64/debug/bundle/lib/libflutter_linux_gtk.so
+/home/kat/dev-env/Mobile/translator_app/client/build/linux/x64/debug/bundle/lib/librecord_linux_plugin.so
+/home/kat/dev-env/Mobile/translator_app/client/build/linux/x64/debug/bundle/data/flutter_assets/kernel_blob.bin
+/home/kat/dev-env/Mobile/translator_app/client/build/linux/x64/debug/bundle/data/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf
+/home/kat/dev-env/Mobile/translator_app/client/build/linux/x64/debug/bundle/data/flutter_assets/packages/record_web/assets/js/record.worklet.js
+/home/kat/dev-env/Mobile/translator_app/client/build/linux/x64/debug/bundle/data/flutter_assets/packages/record_web/assets/js/record.fixwebmduration.js
+/home/kat/dev-env/Mobile/translator_app/client/build/linux/x64/debug/bundle/data/flutter_assets/fonts/MaterialIcons-Regular.otf
+/home/kat/dev-env/Mobile/translator_app/client/build/linux/x64/debug/bundle/data/flutter_assets/shaders/ink_sparkle.frag
+/home/kat/dev-env/Mobile/translator_app/client/build/linux/x64/debug/bundle/data/flutter_assets/NativeAssetsManifest.json
+/home/kat/dev-env/Mobile/translator_app/client/build/linux/x64/debug/bundle/data/flutter_assets/AssetManifest.json
+/home/kat/dev-env/Mobile/translator_app/client/build/linux/x64/debug/bundle/data/flutter_assets/AssetManifest.bin
+/home/kat/dev-env/Mobile/translator_app/client/build/linux/x64/debug/bundle/data/flutter_assets/FontManifest.json
+/home/kat/dev-env/Mobile/translator_app/client/build/linux/x64/debug/bundle/data/flutter_assets/version.json
+/home/kat/dev-env/Mobile/translator_app/client/build/linux/x64/debug/bundle/data/flutter_assets/NOTICES.Z

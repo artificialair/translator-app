@@ -1,4 +1,4 @@
-# hkthn_translator_app
+# translator_app
 
 A new Flutter project.
 

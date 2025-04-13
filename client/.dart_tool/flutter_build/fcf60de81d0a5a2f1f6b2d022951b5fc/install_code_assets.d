@@ -1,0 +1,1 @@
+ /home/kat/dev-env/Mobile/translator_app/client/.dart_tool/flutter_build/fcf60de81d0a5a2f1f6b2d022951b5fc/native_assets.json: 

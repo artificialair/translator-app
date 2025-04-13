@@ -97,19 +97,28 @@ class _TranslatorAppState extends State<TranslatorAppImplementation> {
     
   @override
   Widget build(BuildContext context) {
+    final Size size = MediaQuery.sizeOf(context);
+
     return Scaffold(
       body: Container(
-        padding: EdgeInsets.all(150),
+        padding: EdgeInsets.all(25),
         alignment: FractionalOffset.center,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Column(
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: size.height*0.1, horizontal: size.width*0.1),
+              child: Column(
                 children: <Widget> [
-                  SizedBox(
-                    width: 500,
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                    child: SizedBox(
+                    width: size.width*0.2,
+                    height: size.height*0.4,
                     child: TextField(
                       controller: _controller,
+                      minLines: 25,
+                      maxLines: 25,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(), 
                         labelText: 'Input text to be translated',), 
@@ -128,20 +137,28 @@ class _TranslatorAppState extends State<TranslatorAppImplementation> {
                       },
                     ),
                   ),
+                ),
+                
                   Container(
                     child: ListenableBuilder(
                       listenable: _httpNotifier,
                       builder: (context, child) {
-                        return LanguageDropdown(notifier: _httpNotifier);
+                        return LanguageDropdown(notifier: _httpNotifier, identifier: 1);
                       }
                     ),
                   ),
                   ],
                 ),
-              Column (
+              ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: size.height*0.1, horizontal: size.width*0.1),
+              child: Column (
                 children: <Widget> [
-                  SizedBox(
-                    width: 500,
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical:15),
+                    child: SizedBox(
+                    width: size.width*0.15,
+                    height: size.height*0.4,
                     child: Container(
                       decoration: BoxDecoration(border: Border.all()),
                       child: ListenableBuilder(
@@ -152,15 +169,17 @@ class _TranslatorAppState extends State<TranslatorAppImplementation> {
                       ),
                     )
                   ),
+                ),
                   Container(
                     child: ListenableBuilder(
                       listenable: _httpNotifier,
                       builder: (context, child) {
-                        return LanguageDropdown(notifier: _httpNotifier);
+                        return LanguageDropdown(notifier: _httpNotifier, identifier: 2);
                       },
                     ),
                   ),
                 ],
+              ),
               ),
             ],
         ),
@@ -171,8 +190,9 @@ class _TranslatorAppState extends State<TranslatorAppImplementation> {
 
 class LanguageDropdown extends StatefulWidget {
   HTTPNotifier notifier;
+  int identifier;
 
-  LanguageDropdown({Key? key, required this.notifier}) : super(key: key);
+  LanguageDropdown({Key? key, required this.notifier, required this.identifier}) : super(key: key);
 
   State<LanguageDropdown> createState() => _LanguageDropdownState();
 }
@@ -189,10 +209,11 @@ class _LanguageDropdownState extends State<LanguageDropdown> {
           initialSelection: tLCD.languageCodes.keys.first,
           onSelected: (String? value) {
             setState(() {
-              tLCD.dropdownValuedest = value!;
+                (widget.identifier == 1) ? tLCD.dropdownValuesrc = value! : tLCD.dropdownValuedest = value!;
               });
-              String localLanguageCode = tLCD.languageCodes[tLCD.dropdownValuedest]!;
-              widget.notifier.updateURL(widget.notifier.substr, widget.notifier.src_code, localLanguageCode);
+              String localLanguageCodedest = tLCD.languageCodes[tLCD.dropdownValuedest]!;
+              String localLanguageCodesrc = tLCD.languageCodes[tLCD.dropdownValuesrc]!;
+              widget.notifier.updateURL(widget.notifier.substr, localLanguageCodesrc, localLanguageCodedest);
               print(widget.notifier.http_endpoint);
             },
           dropdownMenuEntries: tLCD.menuEntries,

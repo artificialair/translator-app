@@ -119,6 +119,8 @@ class _TranslatorAppState extends State<TranslatorAppImplementation> {
                       controller: _controller,
                       minLines: 25,
                       maxLines: 25,
+                      keyboardType: TextInputType.text,
+                      textInputAction: TextInputAction.done,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(), 
                         labelText: 'Input text to be translated',), 
@@ -180,8 +182,8 @@ class _TranslatorAppState extends State<TranslatorAppImplementation> {
                   ),
                 ],
               ),
-              ),
-            ],
+            ),
+          ],
         ),
       ),
     );

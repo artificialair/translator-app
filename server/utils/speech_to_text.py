@@ -11,12 +11,10 @@ def speech_to_text(audio_content, language):
     config = speech.RecognitionConfig(
         encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
         sample_rate_hertz=44100,
-        language_code="es-US",
+        language_code=lang.codes.get(language, "en-US"),
         audio_channel_count = 2,
     )
 
     response = client.recognize(config=config, audio=audio)
     for result in response.results:
-        print(f"Transcript: {result.alternatives[0].transcript}")
-
-    print(response)
+        return result.alternatives[0].transcript
